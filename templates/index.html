@@ -82,8 +82,8 @@
 
         // Change API_URL based on environment
         const API_URL = window.location.hostname === "localhost" 
-            ? "http://127.0.0.1:5000/web-predict" 
-            : "https://medical-insurance-price-prediction-1.onrender.com/web-predict";
+            ? "http://127.0.0.1:5000/predict" 
+            : "https://medical-insurance-price-prediction-1.onrender.com/predict";
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
