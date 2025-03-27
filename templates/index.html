@@ -80,8 +80,15 @@
         const form = document.getElementById('predictForm');
         const resultDiv = document.getElementById('result');
 
+        // Change API_URL based on environment
+        const API_URL = window.location.hostname === "localhost" 
+            ? "http://127.0.0.1:5000/predict" 
+            : "https://medical-insurance-price-prediction-1.onrender.com/predict";
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            resultDiv.innerHTML = "Predicting... Please wait.";
 
             const data = {
                 age: document.getElementById('age').value,
@@ -93,20 +100,25 @@
             };
 
             try {
-                const response = await fetch('https://medical-insurance-price-prediction-1.onrender.com/predict', {
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
 
+                if (!response.ok) {
+                    throw new Error(`Server Error: ${response.status}`);
+                }
+
                 const result = await response.json();
                 if (result.prediction) {
                     resultDiv.innerHTML = `<strong>Predicted Insurance Price: ${result.prediction}</strong>`;
+                    form.reset();
                 } else {
                     resultDiv.innerHTML = `<strong>Error: ${result.error}</strong>`;
                 }
             } catch (error) {
-                resultDiv.innerHTML = `<strong>Error connecting to API</strong>`;
+                resultDiv.innerHTML = `<strong>Something went wrong: ${error.message}</strong>`;
             }
         });
     </script>

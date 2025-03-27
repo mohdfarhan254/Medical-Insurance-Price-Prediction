@@ -7,22 +7,22 @@ import pickle
 import numpy as np
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 
-# Load trained ML model
+# ------------------- Load Trained ML Model -------------------
 with open('model.pkl', 'rb') as file:
     model = pickle.load(file)
 
-# ------------------- Web Route -------------------
+# ------------------- Home Route (Web Page) -------------------
 @app.route('/')
 def home():
-    # Render HTML page with input fields
     return render_template('index.html')
 
 # ------------------- Predict from Web Form -------------------
-@app.route('/predict', methods=['POST'])
-def predict():
+@app.route('/web-predict', methods=['POST'])
+def predict_web():
     try:
+        # Collect form data
         age = float(request.form['age'])
         sex = int(request.form['sex'])
         bmi = float(request.form['bmi'])
@@ -30,6 +30,7 @@ def predict():
         smoker = int(request.form['smoker'])
         region = int(request.form['region'])
 
+        # Prediction
         input_data = np.array([[age, sex, bmi, children, smoker, region]])
         prediction = model.predict(input_data)[0]
         prediction = round(prediction, 2)
@@ -38,11 +39,12 @@ def predict():
     except Exception as e:
         return render_template('index.html', prediction=f'Error: {str(e)}')
 
-# ------------------- Predict from API (Postman/React) -------------------
+# ------------------- Predict from API (Postman / React / JS) -------------------
 @app.route('/predict', methods=['POST'])
 def predict_api():
     try:
-        data = request.json
+        # Get JSON data
+        data = request.get_json()
         age = float(data['age'])
         sex = int(data['sex'])
         bmi = float(data['bmi'])
@@ -50,6 +52,7 @@ def predict_api():
         smoker = int(data['smoker'])
         region = int(data['region'])
 
+        # Prediction
         input_data = np.array([[age, sex, bmi, children, smoker, region]])
         prediction = model.predict(input_data)[0]
         prediction = round(prediction, 2)
@@ -58,5 +61,6 @@ def predict_api():
     except Exception as e:
         return jsonify({'error': str(e)})
 
+# ------------------- Run the Flask App -------------------
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
