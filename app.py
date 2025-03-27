@@ -7,7 +7,7 @@ import pickle
 import numpy as np
 
 app = Flask(__name__)
-CORS(app)  # To allow requests from Postman, React, etc.
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Load trained ML model
 with open('model.pkl', 'rb') as file:
