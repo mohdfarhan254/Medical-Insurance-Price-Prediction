@@ -39,7 +39,7 @@ def predict():
         return render_template('index.html', prediction=f'Error: {str(e)}')
 
 # ------------------- Predict from API (Postman/React) -------------------
-@app.route('/predict_api', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def predict_api():
     try:
         data = request.json
