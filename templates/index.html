@@ -2,76 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insurance Cost Predictor</title>
+    <title>Medical Insurance Price Predictor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
+            padding: 30px;
+            background-color: #f8f8f8;
         }
         form {
-            display: inline-block;
-            text-align: left;
+            background-color: #fff;
             padding: 20px;
-            border: 1px solid #ddd;
             border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            width: 400px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         input, select {
             width: 100%;
-            padding: 8px;
-            margin: 5px 0;
+            padding: 10px;
+            margin-top: 10px;
         }
         button {
+            margin-top: 20px;
             padding: 10px;
-            background-color: #28a745;
-            color: white;
+            width: 100%;
+            background-color: #4CAF50;
+            color: #fff;
             border: none;
-            cursor: pointer;
+            border-radius: 5px;
         }
-        button:hover {
-            background-color: #218838;
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
-    <h2>Insurance Cost Predictor</h2>
-    <form action="/predict" method="post">
-        <label for="age">Age:</label>
-        <input type="number" name="age" required>
-        
-        <label for="sex">Sex:</label>
-        <select name="sex" required>
+
+    <h2 style="text-align:center;">Medical Insurance Price Prediction</h2>
+
+    <form id="predictForm">
+        <label>Age:</label>
+        <input type="number" id="age" required>
+
+        <label>Sex:</label>
+        <select id="sex" required>
             <option value="0">Female</option>
             <option value="1">Male</option>
         </select>
-        
-        <label for="bmi">BMI:</label>
-        <input type="number" step="0.1" name="bmi" required>
-        
-        <label for="children">Number of Children:</label>
-        <input type="number" name="children" required>
-        
-        <label for="smoker">Smoker:</label>
-        <select name="smoker" required>
+
+        <label>BMI:</label>
+        <input type="number" id="bmi" step="0.1" required>
+
+        <label>Children:</label>
+        <input type="number" id="children" required>
+
+        <label>Smoker:</label>
+        <select id="smoker" required>
             <option value="0">No</option>
             <option value="1">Yes</option>
         </select>
-        
-        <label for="region">Region:</label>
-        <select name="region" required>
+
+        <label>Region:</label>
+        <select id="region" required>
             <option value="0">Southwest</option>
             <option value="1">Southeast</option>
             <option value="2">Northwest</option>
             <option value="3">Northeast</option>
         </select>
-        
+
         <button type="submit">Predict</button>
+        <div id="result"></div>
     </form>
-    
-    {% if prediction %}
-        <h3>Predicted Insurance Cost: {{ prediction }}</h3>
-    {% endif %}
+
+    <script>
+        const form = document.getElementById('predictForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                age: document.getElementById('age').value,
+                sex: document.getElementById('sex').value,
+                bmi: document.getElementById('bmi').value,
+                children: document.getElementById('children').value,
+                smoker: document.getElementById('smoker').value,
+                region: document.getElementById('region').value
+            };
+
+            try {
+                const response = await fetch('https://medical-insurance-price-prediction-1.onrender.com/predict_api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.prediction) {
+                    resultDiv.innerHTML = `<strong>Predicted Insurance Price: ${result.prediction}</strong>`;
+                } else {
+                    resultDiv.innerHTML = `<strong>Error: ${result.error}</strong>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error connecting to API</strong>`;
+            }
+        });
+    </script>
+
 </body>
 </html>
