@@ -19,7 +19,7 @@ def home():
     return render_template('index.html')
 
 # ------------------- Predict from Web Form -------------------
-@app.route('/web-predict', methods=['POST'])
+@app.route('/predict_web', methods=['POST'])
 def predict_web():
     try:
         # Collect form data
@@ -40,7 +40,7 @@ def predict_web():
         return render_template('index.html', prediction=f'Error: {str(e)}')
 
 # ------------------- Predict from API (Postman / React / JS) -------------------
-@app.route('/web-predict', methods=['POST'])
+@app.route('/predict_api', methods=['POST'])
 def predict_api():
     try:
         # Get JSON data
